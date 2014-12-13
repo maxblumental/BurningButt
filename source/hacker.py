@@ -1,6 +1,7 @@
 import itertools
 import threading as th
 import pexpect as pe
+        
 
 class HackerThread(th.Thread):
 
@@ -21,7 +22,7 @@ class HackerThread(th.Thread):
 
             password = plst[self._i]
 
-            print('COMM: '+password)
+            print('COMM: '+password+str(self._i))
 
             if self._event.isSet():
                 quit()
@@ -31,10 +32,12 @@ class HackerThread(th.Thread):
             try: 
                 child.expect('passphrase:', timeout=2)
             except pe.ExceptionPexpect as ex:
-                #print ex.message
-                print "Didn't get password prompt!"
-                self._event.set()
-                quit()
+                print(ex.message)
+                if self._event.isSet():
+                    quit()
+                print("Didn't get password prompt!"+str(self._i))
+                #self._event.set()
+                #quit()
 
             #feed the password to unzip
             child.sendline(str(password))
@@ -42,9 +45,9 @@ class HackerThread(th.Thread):
             try:
                 child.expect('bad key', timeout=2)
             except pe.ExceptionPexpect as ex:
-                print 'HERE I AM '+str(password)
-                print ex.message
-                print "Success!"
+                print("HERE I AM "+str(password)+str(self._i))
+                result = password
+                print(ex.message)
                 self._event.set()
                 child.kill(0)
                 return True
@@ -55,16 +58,14 @@ class HackerThread(th.Thread):
     def check(self, result): 
         if result != '':
             self._event.set()
-            print(result)
             quit()
 
     def run(self):
 
         result = ""
 
-        #result = self.break_fool()
-        #print(result)
-        #self.check(result)
+        result = self.break_fool()
+        self.check(result)
         if self._key == '' and self._length == 0:
             result = self.brute_force()
             self.check(result)
@@ -87,7 +88,7 @@ class HackerThread(th.Thread):
             fFt = open(self._filename,'r')
             plst = []
             for line in fFt:
-                plst.append(line)
+                plst.append(line[:-1])
                 if len(plst) == self._np:
                     if self.communicator(plst):
                         return plst[self._i]
@@ -161,8 +162,8 @@ if __name__ == '__main__':
     #User input
     np = 4
     index = 0
-    length = 0
-    key = 'ab'
+    length = 6
+    key = ''
     filename = "secure.gpg"
     #Hint to be added
 
