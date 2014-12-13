@@ -18,8 +18,6 @@ class PassThread(QtCore.QThread):
 
   def run(self):
 
-    print('PassThread')
-
     threads = [ hacker.HackerThread(i, 0, self._np, self._event, str(self._filename), self._length, str(self._key)) for i in range(self._np) ]
 
     for thread in threads:
@@ -37,7 +35,6 @@ class TimeThread(QtCore.QThread):
 
   def run(self):
 
-    print('TimeThread')
     if self._flag == 0:
         self._ginfo.ptimer.start()
         self._ginfo.start.setText('Stop')

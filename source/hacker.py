@@ -22,7 +22,7 @@ class HackerThread(th.Thread):
 
             password = plst[self._i]
 
-            print('COMM: '+password+str(self._i))
+            #print('COMM: '+password+str(self._i))
 
             if self._event.isSet():
                 quit()
@@ -32,7 +32,7 @@ class HackerThread(th.Thread):
             try: 
                 child.expect('passphrase:', timeout=2)
             except pe.ExceptionPexpect as ex:
-                print(ex.message)
+                #print(ex.message)
                 if self._event.isSet():
                     quit()
                 print("Didn't get password prompt!"+str(self._i))
@@ -45,9 +45,9 @@ class HackerThread(th.Thread):
             try:
                 child.expect('bad key', timeout=2)
             except pe.ExceptionPexpect as ex:
-                print("HERE I AM "+str(password)+str(self._i))
+                print("HERE I AM: "+str(password)+str(self._i))
                 result = password
-                print(ex.message)
+                #print(ex.message)
                 self._event.set()
                 child.kill(0)
                 return True
@@ -82,9 +82,9 @@ class HackerThread(th.Thread):
 
     def break_fool(self): 
             if self._length != 0:
-                self._filename = "./fool_tables/full_Fool_table_" + str(self._length) + ".txt"
+                self._filename = "./fool_tables/ft_" + str(self._length) + ".txt"
             else:
-                self._filename = "./fool_tables/full_Fool_table.txt"
+                self._filename = "./fool_tables/full_ft.txt"
             fFt = open(self._filename,'r')
             plst = []
             for line in fFt:
@@ -112,7 +112,7 @@ class HackerThread(th.Thread):
     def brute_force(self):
           for j in range (1, 16):
             password = self.helper(j)
-          print(password)
+          #print(password)
           if (password != ""):
               return password
           return ""
